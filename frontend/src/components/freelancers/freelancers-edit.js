@@ -46,7 +46,7 @@ export class FreelancersEdit {
     async getFreelancer(id) {
         const response = await FreelancersService.getFreelancer(id);
         if (response.error) {
-            alert(response.error)
+            alert(response.error);
             return response.redirect ? this.openNewRoute(response.redirect) : null;
         }
 
