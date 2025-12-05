@@ -5,3 +5,4 @@ frontend/.idea/
 backend/package-lock.json
 backend/node_modules/
 backend/.idea/
+.idea
