@@ -19,17 +19,20 @@ MongoDBConnection.getConnection((error, connection) => {
     }
     const app = express();
 
-    app.use(express.static(path.join(__dirname, 'public')));
-    app.use(express.json({limit: '50mb'}));
+    const allowedOrigins = [
+        'https://freelance-studio-frontend.onrender.com',
+        'http://localhost:4200'
+    ];
     app.use(cors({
-        origin: [
-            'https://freelance-studio-frontend.onrender.com'
-        ],
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-        allowedHeaders: 'Content-Type, Authorization',
+        origin: allowedOrigins,
         credentials: true
     }));
-    app.options('*', cors());
+    app.options('*', cors({
+        origin: allowedOrigins,
+        credentials: true
+    }));
+    app.use(express.json({limit: '50mb'}));
+    app.use(express.static(path.join(__dirname, 'public')));
 
     passport.use(new JwtStrategy({
         jwtFromRequest: ExtractJwt.fromHeader('authorization'),
