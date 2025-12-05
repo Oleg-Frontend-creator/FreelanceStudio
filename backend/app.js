@@ -21,7 +21,15 @@ MongoDBConnection.getConnection((error, connection) => {
 
     app.use(express.static(path.join(__dirname, 'public')));
     app.use(express.json({limit: '50mb'}));
-    app.use(cors());
+    app.use(cors({
+        origin: [
+            'https://freelance-studio-frontend.onrender.com'
+        ],
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+        allowedHeaders: 'Content-Type, Authorization',
+        credentials: true
+    }));
+    app.options('*', cors());
 
     passport.use(new JwtStrategy({
         jwtFromRequest: ExtractJwt.fromHeader('authorization'),
