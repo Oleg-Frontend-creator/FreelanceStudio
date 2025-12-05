@@ -67,8 +67,9 @@ MongoDBConnection.getConnection((error, connection) => {
         res.status(err.status || 500).send({error: true, message: err.message});
     });
 
-    app.listen(config.port, () =>
-        console.log(`Сервер запущен`)
+    const PORT = config.port || 3000;
+    app.listen(PORT, '0.0.0.0', () =>
+        console.log(`Server started on port ${PORT}`)
     );
 })
 
