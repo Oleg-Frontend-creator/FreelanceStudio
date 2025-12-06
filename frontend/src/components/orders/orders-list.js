@@ -20,6 +20,9 @@ export class OrdersList {
     showRecords(orders) {
         const recordsElement = document.getElementById('records');
         for (let i = 0; i < orders.length; i++) {
+            if(orders[i].owner === null)
+                continue;
+
             const trElement = document.createElement('tr');
             trElement.insertCell().innerText = orders[i].number;
             trElement.insertCell().innerText = orders[i].owner.name + ' ' + orders[i].owner.lastName;
