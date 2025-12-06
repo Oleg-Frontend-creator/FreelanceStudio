@@ -2,18 +2,36 @@ const BaseNormalizer = require("./base.normalizer");
 const config = require("../config/config");
 
 class OrderNormalizer extends BaseNormalizer {
-    static normalize(order) {
-        let obj = {
-            id: order.id,
+    static normalize(orderDoc) {
+        // если прилетел mongoose-документ — переведём в обычный объект
+        const order = orderDoc && orderDoc.toObject ? orderDoc.toObject() : orderDoc || {};
+
+        const owner = order.owner || null;
+        let ownerObj = null;
+
+        if (owner) {
+            if (typeof owner === 'object' && '_id' in owner) {
+                // популяшенный пользователь
+                ownerObj = {
+                    id: owner._id,
+                    name: owner.name,
+                    lastName: owner.lastName,
+                };
+            } else {
+                // просто ObjectId
+                ownerObj = {
+                    id: owner,
+                };
+            }
+        }
+
+        const result = {
+            id: order._id || order.id,
             number: order.number,
             description: order.description,
             deadlineDate: order.deadlineDate,
             scheduledDate: order.scheduledDate,
-            owner: {
-                id: order.owner._id,
-                name: order.owner.name,
-                lastName: order.owner.lastName,
-            },
+            owner: ownerObj,
             completeDate: order.completeDate,
             amount: order.amount,
             status: order.status,
@@ -21,17 +39,24 @@ class OrderNormalizer extends BaseNormalizer {
             updatedAt: order.updatedAt,
         };
 
-        if (order.freelancer && order.freelancer._id) {
-            obj.freelancer = {
-                id: order.freelancer._id,
-                name: order.freelancer.name,
-                lastName: order.freelancer.lastName,
-                avatar: config.freelancerAvatarsPath + order.freelancer.avatar,
-                level: order.freelancer.level,
-            };
+        const freelancer = order.freelancer || null;
+        if (freelancer) {
+            if (typeof freelancer === 'object' && '_id' in freelancer) {
+                result.freelancer = {
+                    id: freelancer._id,
+                    name: freelancer.name,
+                    lastName: freelancer.lastName,
+                    avatar: config.freelancerAvatarsPath + freelancer.avatar,
+                    level: freelancer.level,
+                };
+            } else {
+                result.freelancer = {
+                    id: freelancer,
+                };
+            }
         }
 
-        return obj;
+        return result;
     }
 }
 
